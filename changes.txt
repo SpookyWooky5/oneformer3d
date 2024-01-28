@@ -1,0 +1,5 @@
+cuda 12.2 hotfix for MinkowskiEngine
+spconv
+torch_scatter
+manual download whls for torch_scatter
+add sys.path.insert(0, './') to directory if import error

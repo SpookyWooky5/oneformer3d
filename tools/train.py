@@ -11,6 +11,7 @@ from mmengine.runner import Runner
 
 from mmdet3d.utils import replace_ceph_backend
 
+sys.path.insert(0, './')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a 3D detector')

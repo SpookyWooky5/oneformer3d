@@ -1,4 +1,6 @@
 data
+checkpoints/*.pth
+whls/*.whl
 work_dirs
 .vscode
 __pycache__/
