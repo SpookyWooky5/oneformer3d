@@ -9,28 +9,101 @@ import numpy as np
 
 class ScanNetData(object):
     """ScanNet data.
-
     Generate scannet infos for scannet_converter.
 
     Args:
         root_path (str): Root path of the raw data.
         split (str, optional): Set split type of the data. Default: 'train'.
+        scannet200 (bool): True for ScanNet200, else for ScanNet.
+        save_path (str, optional): Output directory.
     """
 
-    def __init__(self, root_path, split='train'):
+    def __init__(self, root_path, split='train', scannet200=False, save_path=None):
         self.root_dir = root_path
+        self.save_path = root_path if save_path is None else save_path
         self.split = split
         self.split_dir = osp.join(root_path)
-        self.classes = [
-            'cabinet', 'bed', 'chair', 'sofa', 'table', 'door', 'window',
-            'bookshelf', 'picture', 'counter', 'desk', 'curtain',
-            'refrigerator', 'showercurtrain', 'toilet', 'sink', 'bathtub',
-            'garbagebin'
-        ]
+        self.scannet200 = scannet200
+        if self.scannet200:
+            self.classes = [
+                'chair', 'table', 'door', 'couch', 'cabinet', 'shelf', 'desk',
+                'office chair', 'bed', 'pillow', 'sink', 'picture', 'window',
+                'toilet', 'bookshelf', 'monitor', 'curtain', 'book',
+                'armchair', 'coffee table', 'box', 'refrigerator', 'lamp',
+                'kitchen cabinet', 'towel', 'clothes', 'tv', 'nightstand',
+                'counter', 'dresser', 'stool', 'cushion', 'plant', 'ceiling',
+                'bathtub', 'end table', 'dining table', 'keyboard', 'bag',
+                'backpack', 'toilet paper', 'printer', 'tv stand',
+                'whiteboard', 'blanket', 'shower curtain', 'trash can',
+                'closet', 'stairs', 'microwave', 'stove', 'shoe',
+                'computer tower', 'bottle', 'bin', 'ottoman', 'bench', 'board',
+                'washing machine', 'mirror', 'copier', 'basket', 'sofa chair',
+                'file cabinet', 'fan', 'laptop', 'shower', 'paper', 'person',
+                'paper towel dispenser', 'oven', 'blinds', 'rack', 'plate',
+                'blackboard', 'piano', 'suitcase', 'rail', 'radiator',
+                'recycling bin', 'container', 'wardrobe', 'soap dispenser',
+                'telephone', 'bucket', 'clock', 'stand', 'light',
+                'laundry basket', 'pipe', 'clothes dryer', 'guitar',
+                'toilet paper holder', 'seat', 'speaker', 'column', 'bicycle',
+                'ladder', 'bathroom stall', 'shower wall', 'cup', 'jacket',
+                'storage bin', 'coffee maker', 'dishwasher',
+                'paper towel roll', 'machine', 'mat', 'windowsill', 'bar',
+                'toaster', 'bulletin board', 'ironing board', 'fireplace',
+                'soap dish', 'kitchen counter', 'doorframe',
+                'toilet paper dispenser', 'mini fridge', 'fire extinguisher',
+                'ball', 'hat', 'shower curtain rod', 'water cooler',
+                'paper cutter', 'tray', 'shower door', 'pillar', 'ledge',
+                'toaster oven', 'mouse', 'toilet seat cover dispenser',
+                'furniture', 'cart', 'storage container', 'scale',
+                'tissue box', 'light switch', 'crate', 'power outlet',
+                'decoration', 'sign', 'projector', 'closet door',
+                'vacuum cleaner', 'candle', 'plunger', 'stuffed animal',
+                'headphones', 'dish rack', 'broom', 'guitar case',
+                'range hood', 'dustpan', 'hair dryer', 'water bottle',
+                'handicap bar', 'purse', 'vent', 'shower floor',
+                'water pitcher', 'mailbox', 'bowl', 'paper bag', 'alarm clock',
+                'music stand', 'projector screen', 'divider',
+                'laundry detergent', 'bathroom counter', 'object',
+                'bathroom vanity', 'closet wall', 'laundry hamper',
+                'bathroom stall door', 'ceiling light', 'trash bin',
+                'dumbbell', 'stair rail', 'tube', 'bathroom cabinet',
+                'cd case', 'closet rod', 'coffee kettle', 'structure',
+                'shower head', 'keyboard piano', 'case of water bottles',
+                'coat rack', 'storage organizer', 'folded chair', 'fire alarm',
+                'power strip', 'calendar', 'poster', 'potted plant', 'luggage',
+                'mattress'
+            ]
+            self.cat_ids = np.array([
+                2, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 21,
+                22, 23, 24, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 38, 39, 40,
+                41, 42, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 55, 56, 57, 58,
+                59, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
+                77, 78, 79, 80, 82, 84, 86, 87, 88, 89, 90, 93, 95, 96, 97, 98,
+                99, 100, 101, 102, 103, 104, 105, 106, 107, 110, 112, 115, 116,
+                118, 120, 121, 122, 125, 128, 130, 131, 132, 134, 136, 138,
+                139, 140, 141, 145, 148, 154, 155, 156, 157, 159, 161, 163,
+                165, 166, 168, 169, 170, 177, 180, 185, 188, 191, 193, 195,
+                202, 208, 213, 214, 221, 229, 230, 232, 233, 242, 250, 261,
+                264, 276, 283, 286, 300, 304, 312, 323, 325, 331, 342, 356,
+                370, 392, 395, 399, 408, 417, 488, 540, 562, 570, 572, 581,
+                609, 748, 776, 1156, 1163, 1164, 1165, 1166, 1167, 1168, 1169,
+                1170, 1171, 1172, 1173, 1174, 1175, 1176, 1178, 1179, 1180,
+                1181, 1182, 1183, 1184, 1185, 1186, 1187, 1188, 1189, 1190,
+                1191
+            ])
+        else:
+            self.classes = [
+                'cabinet', 'bed', 'chair', 'sofa', 'table', 'door', 'window',
+                'bookshelf', 'picture', 'counter', 'desk', 'curtain',
+                'refrigerator', 'showercurtrain', 'toilet', 'sink', 'bathtub',
+                'garbagebin'
+            ]
+            self.cat_ids = np.array([
+                3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39
+            ])
+
         self.cat2label = {cat: self.classes.index(cat) for cat in self.classes}
         self.label2cat = {self.cat2label[t]: t for t in self.cat2label}
-        self.cat_ids = np.array(
-            [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36, 39])
         self.cat_ids2class = {
             nyu40id: i
             for i, nyu40id in enumerate(list(self.cat_ids))
@@ -110,10 +183,18 @@ class ScanNetData(object):
             pts_filename = osp.join(self.root_dir, 'scannet_instance_data',
                                     f'{sample_idx}_vert.npy')
             points = np.load(pts_filename)
-            mmengine.mkdir_or_exist(osp.join(self.root_dir, 'points'))
+            mmengine.mkdir_or_exist(osp.join(self.save_path, 'points'))
             points.tofile(
-                osp.join(self.root_dir, 'points', f'{sample_idx}.bin'))
+                osp.join(self.save_path, 'points', f'{sample_idx}.bin'))
             info['pts_path'] = osp.join('points', f'{sample_idx}.bin')
+
+            sp_filename = osp.join(self.root_dir, 'scannet_instance_data',
+                                    f'{sample_idx}_sp_label.npy')
+            super_points = np.load(sp_filename)
+            mmengine.mkdir_or_exist(osp.join(self.save_path, 'super_points'))
+            super_points.tofile(
+                osp.join(self.save_path, 'super_points', f'{sample_idx}.bin'))
+            info['super_pts_path'] = osp.join('super_points', f'{sample_idx}.bin')
 
             # update with RGB image paths if exist
             if os.path.exists(osp.join(self.root_dir, 'posed_images')):
@@ -143,15 +224,15 @@ class ScanNetData(object):
                     np.int64)
 
                 mmengine.mkdir_or_exist(
-                    osp.join(self.root_dir, 'instance_mask'))
+                    osp.join(self.save_path, 'instance_mask'))
                 mmengine.mkdir_or_exist(
-                    osp.join(self.root_dir, 'semantic_mask'))
+                    osp.join(self.save_path, 'semantic_mask'))
 
                 pts_instance_mask.tofile(
-                    osp.join(self.root_dir, 'instance_mask',
+                    osp.join(self.save_path, 'instance_mask',
                              f'{sample_idx}.bin'))
                 pts_semantic_mask.tofile(
-                    osp.join(self.root_dir, 'semantic_mask',
+                    osp.join(self.save_path, 'semantic_mask',
                              f'{sample_idx}.bin'))
 
                 info['pts_instance_mask_path'] = osp.join(
@@ -198,102 +279,3 @@ class ScanNetData(object):
         with futures.ThreadPoolExecutor(num_workers) as executor:
             infos = executor.map(process_single_scene, sample_id_list)
         return list(infos)
-
-
-class ScanNetSegData(object):
-    """ScanNet dataset used to generate infos for semantic segmentation task.
-
-    Args:
-        data_root (str): Root path of the raw data.
-        ann_file (str): The generated scannet infos.
-        split (str, optional): Set split type of the data. Default: 'train'.
-        num_points (int, optional): Number of points in each data input.
-            Default: 8192.
-        label_weight_func (function, optional): Function to compute the
-            label weight. Default: None.
-    """
-
-    def __init__(self,
-                 data_root,
-                 ann_file,
-                 split='train',
-                 num_points=8192,
-                 label_weight_func=None):
-        self.data_root = data_root
-        self.data_infos = mmengine.load(ann_file)
-        self.split = split
-        assert split in ['train', 'val', 'test']
-        self.num_points = num_points
-
-        self.all_ids = np.arange(41)  # all possible ids
-        self.cat_ids = np.array([
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 24, 28, 33, 34, 36,
-            39
-        ])  # used for seg task
-        self.ignore_index = len(self.cat_ids)
-
-        self.cat_id2class = np.ones(
-            (self.all_ids.shape[0], ), dtype=np.int64) * self.ignore_index
-        for i, cat_id in enumerate(self.cat_ids):
-            self.cat_id2class[cat_id] = i
-
-        # label weighting function is taken from
-        # https://github.com/charlesq34/pointnet2/blob/master/scannet/scannet_dataset.py#L24
-        self.label_weight_func = (lambda x: 1.0 / np.log(1.2 + x)) if \
-            label_weight_func is None else label_weight_func
-
-    def get_seg_infos(self):
-        if self.split == 'test':
-            return
-        scene_idxs, label_weight = self.get_scene_idxs_and_label_weight()
-        save_folder = osp.join(self.data_root, 'seg_info')
-        mmengine.mkdir_or_exist(save_folder)
-        np.save(
-            osp.join(save_folder, f'{self.split}_resampled_scene_idxs.npy'),
-            scene_idxs)
-        np.save(
-            osp.join(save_folder, f'{self.split}_label_weight.npy'),
-            label_weight)
-        print(f'{self.split} resampled scene index and label weight saved')
-
-    def _convert_to_label(self, mask):
-        """Convert class_id in loaded segmentation mask to label."""
-        if isinstance(mask, str):
-            if mask.endswith('npy'):
-                mask = np.load(mask)
-            else:
-                mask = np.fromfile(mask, dtype=np.int64)
-        label = self.cat_id2class[mask]
-        return label
-
-    def get_scene_idxs_and_label_weight(self):
-        """Compute scene_idxs for data sampling and label weight for loss
-        calculation.
-
-        We sample more times for scenes with more points. Label_weight is
-        inversely proportional to number of class points.
-        """
-        num_classes = len(self.cat_ids)
-        num_point_all = []
-        label_weight = np.zeros((num_classes + 1, ))  # ignore_index
-        for data_info in self.data_infos:
-            label = self._convert_to_label(
-                osp.join(self.data_root, data_info['pts_semantic_mask_path']))
-            num_point_all.append(label.shape[0])
-            class_count, _ = np.histogram(label, range(num_classes + 2))
-            label_weight += class_count
-
-        # repeat scene_idx for num_scene_point // num_sample_point times
-        sample_prob = np.array(num_point_all) / float(np.sum(num_point_all))
-        num_iter = int(np.sum(num_point_all) / float(self.num_points))
-        scene_idxs = []
-        for idx in range(len(self.data_infos)):
-            scene_idxs.extend([idx] * int(round(sample_prob[idx] * num_iter)))
-        scene_idxs = np.array(scene_idxs).astype(np.int32)
-
-        # calculate label weight, adopted from PointNet++
-        label_weight = label_weight[:-1].astype(np.float32)
-        label_weight = label_weight / label_weight.sum()
-        label_weight = self.label_weight_func(label_weight).astype(np.float32)
-
-        return scene_idxs, label_weight

@@ -74,7 +74,8 @@ model = dict(
 
 # dataset settings
 dataset_type = 'S3DISSegDataset_'
-data_root = 'data/s3dis/'
+# data_root = 'data/s3dis/'
+data_root = '/media/aether/Ultra Touch/BE/BE_Proj/PCD/data/s3dis_mm_root'
 data_prefix = dict(
     pts='points',
     pts_instance_mask='instance_mask',
@@ -170,7 +171,7 @@ train_dataloader = dict(
 
 val_dataloader = dict(
     batch_size=1,
-    num_workers=1,
+    num_workers=2,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(

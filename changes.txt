@@ -3,3 +3,7 @@ spconv
 torch_scatter
 manual download whls for torch_scatter
 add sys.path.insert(0, './') to directory if import error
+
+oneformer changes
+1. updated tools dir from mmdet3d v1.4.0, with minor changes
+2. changed data/s3dis and config/s3dis py file to work with my pc
