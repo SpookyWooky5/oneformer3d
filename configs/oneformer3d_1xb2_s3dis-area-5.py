@@ -75,8 +75,9 @@ model = dict(
 # dataset settings
 dataset_type = 'S3DISSegDataset_'
 # data_root = 'data/s3dis/'
-# data_root = '/media/aether/Ultra Touch/BE/BE_Proj/PCD/data/s3dis_mm_root'
-data_root = '/kaggle/input/stanford-indoor-3d/'
+# data_root = '/media/aether/Ultra Touch/PCD/s3dis_mm_root'
+# data_root = '/kaggle/input/stanford-indoor-3d/'
+data_root = '/colab/stanford-indoor-3d/'
 data_prefix = dict(
     pts='points',
     pts_instance_mask='instance_mask',
