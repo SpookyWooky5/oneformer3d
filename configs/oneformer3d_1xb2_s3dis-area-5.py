@@ -84,7 +84,7 @@ data_prefix = dict(
     pts_semantic_mask='semantic_mask')
 
 train_area = [1, 2, 3, 4, 6]
-test_area = 5
+test_area = 3
 
 train_pipeline = [
     dict(
